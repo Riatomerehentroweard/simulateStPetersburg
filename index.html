@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<meta name="robots" content="noindex">
+<html>
+
+<head>
+    <title>St. Petersburg Paradox simulation</title>
+
+    <style>
+        .label {
+            margin-bottom: 5px;
+        }
+
+        .label-separator {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button onclick="startSimulation()">Go!</button>
+
+    <script>
+        function startSimulation() {
+            const pricesForNegativeNetworth = {};
+
+            for (var i = 0; i < 10; i++) {
+
+                const price = getPriceForFirstNegativeNetworth();
+
+                pricesForNegativeNetworth[price] = pricesForNegativeNetworth[price] ? ++pricesForNegativeNetworth[price] : 1;
+            }
+
+            console.log(pricesForNegativeNetworth);
+        }
+
+        function getPriceForFirstNegativeNetworth(params) {
+            let priceForGame;
+            let hasPositiveOutcome = true;
+            currentPrice = 2;
+            while (hasPositiveOutcome) {
+
+                let numberOfRound = 0;
+                priceForGame = currentPrice;
+                let playersMoney = priceForGame;
+
+                while (playersMoney > 0 && numberOfRound < 100000) {
+                    numberOfRound++;
+                    playersMoney -= priceForGame;
+                    const consecutiveHeads = getNumberOfConsecutiveHeadFlips();
+                    const playersWinningPrice = Math.pow(2, consecutiveHeads + 1);
+
+                    playersMoney += playersWinningPrice;
+                }
+
+                if (playersMoney <= 0) {
+                    hasPositiveOutcome = false;
+                }
+
+                // console.log('current networth:', playersMoney);
+                // console.log('round:', numberOfRound);
+                // console.log('game is finished for price of ' + priceForGame);
+
+                currentPrice += 1;
+            }
+
+            // console.log('reached negative networth!')
+            return priceForGame;
+        }
+
+        function getNumberOfConsecutiveHeadFlips() {
+            let numberOfConsecutiveHeadFlips = 0;
+            while (isHeads(getRandomCoinFlip())) {
+                numberOfConsecutiveHeadFlips++;
+            }
+            return numberOfConsecutiveHeadFlips;
+        }
+
+        function isHeads(coinFlip) {
+            return coinFlip === 'heads';
+        }
+
+        function getRandomCoinFlip() {
+            const coinflipResult = Math.round(Math.random() + 1);
+
+            if (coinflipResult === 1) {
+                return 'heads';
+            } else {
+                return 'tails';
+            }
+        }
+    </script>
+
+</body>
+
+</html>
